@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Login — MindEase{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+    <div class="auth-card card">
+
+        <div class="auth-header">
+            <div class="auth-logo">🌿</div>
+            <h1 class="auth-title">Welcome Back</h1>
+            <p class="auth-sub">Sign in to continue your wellness journey</p>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <div class="alert">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="/login">
+
+            <div class="field">
+                <label for="email">Email Address</label>
+                <input type="email"
+                       id="email"
+                       name="email"
+                       placeholder="Enter your email"
+                       required>
+            </div>
+
+            <div class="field">
+                <label for="password">Password</label>
+                <input type="password"
+                       id="password"
+                       name="password"
+                       placeholder="Enter your password"
+                       required>
+            </div>
+
+            <button type="submit" class="btn-primary">
+                Sign In
+            </button>
+
+        </form>
+
+        <div class="divider">
+            <span>or</span>
+        </div>
+
+        <p class="auth-footer">
+            Don't have an account?
+            <a href="/register">Create one here</a>
+        </p>
+
+        <div class="crisis-note">
+      🆘 Need immediate help? Call iCall:
+      <a href="tel:9152987821" style="color:inherit; text-decoration:underline;">
+        <strong>9152987821</strong>
+      </a>
+    </div>
+</div>
+
+<style>
+    .auth-wrap {
+        min-height: calc(100vh - 60px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 16px;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .auth-logo {
+        font-size: 2.5rem;
+        margin-bottom: 12px;
+    }
+
+    .auth-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.8rem;
+        color: var(--text);
+        margin-bottom: 8px;
+    }
+
+    .auth-sub {
+        color: var(--muted);
+        font-size: 0.9rem;
+    }
+
+    .field {
+        margin-bottom: 20px;
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 13px;
+        background: var(--sage);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 4px;
+    }
+
+    .btn-primary:hover {
+        background: #6a8e79;
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 24px 0 16px;
+        color: var(--muted);
+        font-size: 0.8rem;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #E8E3DA;
+    }
+
+    .auth-footer {
+        text-align: center;
+        font-size: 0.875rem;
+        color: var(--muted);
+    }
+
+    .auth-footer a {
+        color: var(--sage);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+
+    .alert {
+        background: #FDF0EE;
+        border: 1px solid #EDD5D2;
+        color: var(--danger);
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .crisis-note {
+        margin-top: 20px;
+        padding: 12px 16px;
+        background: #FDF0EE;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        color: var(--muted);
+        text-align: center;
+        border: 1px solid #EDD5D2;
+    }
+</style>
+{% endblock %}

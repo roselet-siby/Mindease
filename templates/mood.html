@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Mood Check-in — MindEase{% endblock %}
+
+{% block extra_style %}
+.alert-success {
+    background: #E9F3EC;
+    color: var(--sage);
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+}
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 12px;
+  margin: 20px 0 24px;
+}
+.mood-option input { display: none; }
+.mood-option label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  background: var(--warm);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  transition: all 0.2s;
+}
+.mood-option label .mood-emoji { font-size: 1.6rem; }
+.mood-option input:checked + label {
+  border-color: var(--sage);
+  background: white;
+  color: var(--sage);
+}
+.intensity-row { margin-bottom: 20px; }
+.intensity-row label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.intensity-row input[type="range"] { width: 100%; }
+.checkin-note {
+  width: 100%;
+  min-height: 90px;
+  padding: 12px;
+  border: 1px solid #E5E0D8;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+.checkin-submit {
+  background: var(--sage);
+  color: white;
+  border: none;
+  padding: 11px 24px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.checkin-submit:hover { opacity: 0.9; }
+
+.log-list { margin-top: 12px; }
+.log-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid #F0EEE7;
+}
+.log-item:last-child { border-bottom: none; }
+.log-emoji { font-size: 1.4rem; }
+.log-body { flex: 1; }
+.log-mood { font-weight: 600; font-size: 0.9rem; }
+.log-date { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
+.log-note { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+{% endblock %}
+
+{% block content %}
+<div class="page">
+  <h1>Mood Check-in</h1>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="alert-success">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+  <p class="subtitle">Take a moment to log how you're feeling today</p>
+
+  <div class="card" style="margin-top:20px;">
+    <form method="POST" action="/mood/add">
+      <div class="mood-grid">
+        <div class="mood-option">
+          <input type="radio" name="mood" id="mood-happy" value="happy" required>
+          <label for="mood-happy"><span class="mood-emoji">😊</span>Happy</label>
+        </div>
+        <div class="mood-option">
+          <input type="radio" name="mood" id="mood-calm" value="calm">
+          <label for="mood-calm"><span class="mood-emoji">🙂</span>Calm</label>
+        </div>
+        <div class="mood-option">
+          <input type="radio" name="mood" id="mood-neutral" value="neutral">
+          <label for="mood-neutral"><span class="mood-emoji">😐</span>Neutral</label>
+        </div>
+        <div class="mood-option">
+          <input type="radio" name="mood" id="mood-anxious" value="anxious">
+          <label for="mood-anxious"><span class="mood-emoji">😟</span>Anxious</label>
+        </div>
+        <div class="mood-option">
+          <input type="radio" name="mood" id="mood-sad" value="sad">
+          <label for="mood-sad"><span class="mood-emoji">😢</span>Sad</label>
+        </div>
+        <div class="mood-option">
+          <input type="radio" name="mood" id="mood-angry" value="angry">
+          <label for="mood-angry"><span class="mood-emoji">😠</span>Angry</label>
+        </div>
+      </div>
+
+      <div class="intensity-row">
+        <label for="intensity">Intensity (1 = mild, 5 = intense)</label>
+        <input type="range" name="intensity" id="intensity" min="1" max="5" value="3">
+      </div>
+
+      <textarea class="checkin-note" name="note" placeholder="Anything you want to note about today? (optional)"></textarea>
+
+      <button type="submit" class="checkin-submit">Save Check-in</button>
+    </form>
+  </div>
+
+  <div class="section-title" style="margin-top:32px;">Recent Check-ins</div>
+  <div class="card">
+    {% if not logs %}
+    <p style="color:var(--muted); text-align:center; padding:20px;">No check-ins yet. Log your first one above.</p>
+    {% else %}
+    <div class="log-list">
+      {% for log in logs %}
+      {# log: (log_id, mood, intensity, note, created_at) #}
+      <div class="log-item">
+        <div class="log-emoji">
+          {% if log[1] == 'happy' %}😊
+          {% elif log[1] == 'calm' %}🙂
+          {% elif log[1] == 'neutral' %}😐
+          {% elif log[1] == 'anxious' %}😟
+          {% elif log[1] == 'sad' %}😢
+          {% elif log[1] == 'angry' %}😠
+          {% else %}🙂
+          {% endif %}
+        </div>
+        <div class="log-body">
+          <div class="log-mood">{{ log[1] | capitalize }}{% if log[2] %} · Intensity {{ log[2] }}/5{% endif %}</div>
+          <div class="log-date">{{ log[4].strftime('%d %b %Y, %I:%M %p') if log[4] else '' }}</div>
+          {% if log[3] %}
+          <div class="log-note">{{ log[3] }}</div>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

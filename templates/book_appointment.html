@@ -1,0 +1,473 @@
+{% extends "base.html" %}
+
+{% block title %}Book Appointment — MindEase{% endblock %}
+
+{% block head %}
+<style>
+    .booking-wrap {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+
+    .booking-header {
+        background: linear-gradient(135deg, var(--sage) 0%, var(--sage-lt) 100%);
+        border-radius: var(--radius);
+        padding: 28px 32px;
+        margin-bottom: 24px;
+        color: white;
+    }
+
+    .booking-header h1 {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.5rem;
+        color: white;
+        margin-bottom: 4px;
+    }
+
+    .booking-header p {
+        font-size: 0.875rem;
+        opacity: 0.85;
+    }
+
+    .booking-card {
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 32px;
+        box-shadow: var(--shadow);
+    }
+
+    .step-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 12px;
+        margin-top: 24px;
+    }
+
+    .step-label:first-child { margin-top: 0; }
+
+    /* Calendar */
+    .calendar-wrap {
+        border: 1.5px solid #E0DAD0;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .calendar-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--sage);
+        padding: 12px 16px;
+        color: white;
+    }
+
+    .cal-nav-btn {
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+
+    .cal-nav-btn:hover { background: rgba(255,255,255,0.35); }
+
+    .cal-month-label {
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        background: white;
+    }
+
+    .cal-day-header {
+        text-align: center;
+        padding: 10px 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--muted);
+        background: var(--cream);
+        border-bottom: 1px solid #E8E3DA;
+    }
+
+    .cal-day {
+        text-align: center;
+        padding: 10px 4px;
+        font-size: 0.875rem;
+        cursor: pointer;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        margin: 2px;
+        transition: all 0.15s;
+        color: var(--text);
+    }
+
+    .cal-day:hover:not(.disabled):not(.empty) {
+        background: var(--warm);
+    }
+
+    .cal-day.selected {
+        background: var(--sage);
+        color: white;
+        font-weight: 600;
+    }
+
+    .cal-day.today {
+        border-color: var(--sage);
+        font-weight: 600;
+    }
+
+    .cal-day.disabled {
+        color: #CCC;
+        cursor: not-allowed;
+    }
+
+    .cal-day.empty { cursor: default; }
+
+    /* Time Slots */
+    .slots-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 4px;
+    }
+
+    .slot-btn {
+        padding: 12px 8px;
+        border: 1.5px solid #E0DAD0;
+        border-radius: 10px;
+        background: var(--cream);
+        color: var(--text);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-align: center;
+    }
+
+    .slot-btn:hover {
+        border-color: var(--sage);
+        background: white;
+    }
+
+    .slot-btn.selected {
+        background: var(--sage);
+        color: white;
+        border-color: var(--sage);
+        font-weight: 600;
+    }
+
+    .slot-btn.booked {
+        background: #F5F5F5;
+        color: #CCC;
+        cursor: not-allowed;
+        border-color: #EEE;
+        text-decoration: line-through;
+    }
+
+    /* Selected summary */
+    .selection-summary {
+        background: var(--cream);
+        border-radius: 10px;
+        padding: 14px 18px;
+        font-size: 0.875rem;
+        color: var(--muted);
+        margin-top: 8px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    .selection-summary.filled {
+        background: #F0FAF4;
+        border: 1px solid #C3E6D0;
+        color: #2D7A4F;
+        font-weight: 500;
+    }
+
+    /* Notes */
+    textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1.5px solid #E0DAD0;
+        border-radius: 10px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.9rem;
+        background: var(--cream);
+        color: var(--text);
+        resize: vertical;
+        min-height: 90px;
+        outline: none;
+        transition: border 0.2s;
+        box-sizing: border-box;
+    }
+
+    textarea:focus { border-color: var(--sage); background: white; }
+
+    .confirm-btn {
+        width: 100%;
+        padding: 14px;
+        background: var(--sage);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 24px;
+        transition: background 0.2s;
+    }
+
+    .confirm-btn:hover:not(:disabled) { background: #6A8E79; }
+    .confirm-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-bottom: 16px;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.875rem;
+    }
+
+    .back-link:hover { color: var(--text); }
+
+    .alert-success {
+        background: #F0FAF4;
+        border: 1px solid #C3E6D0;
+        color: #2D7A4F;
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        margin-bottom: 20px;
+    }
+
+    .alert-error {
+        background: #FDF0EE;
+        border: 1px solid #EDD5D2;
+        color: var(--danger);
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page">
+<div class="booking-wrap">
+
+    <a href="/psychiatrists" class="back-link">&#8592; Back to Doctors</a>
+
+    <div class="booking-header">
+        <h1>Book with {{ doctor[1] }}</h1>
+        <p>{{ doctor[2] }} &nbsp;|&nbsp; {{ doctor[5] }}, {{ doctor[3] }}</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, msg in messages %}
+                <div class="alert-{{ category }}">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="booking-card">
+
+        <form method="POST" action="/book_appointment/{{ doctor[0] }}" id="booking-form">
+
+            <!-- Step 1: Date -->
+            <div class="step-label">Step 1 — Select a Date</div>
+            <div class="calendar-wrap">
+                <div class="calendar-nav">
+                    <button type="button" class="cal-nav-btn" onclick="changeMonth(-1)">&#8249;</button>
+                    <div class="cal-month-label" id="month-label"></div>
+                    <button type="button" class="cal-nav-btn" onclick="changeMonth(1)">&#8250;</button>
+                </div>
+                <div class="calendar-grid" id="calendar-grid">
+                    <div class="cal-day-header">Sun</div>
+                    <div class="cal-day-header">Mon</div>
+                    <div class="cal-day-header">Tue</div>
+                    <div class="cal-day-header">Wed</div>
+                    <div class="cal-day-header">Thu</div>
+                    <div class="cal-day-header">Fri</div>
+                    <div class="cal-day-header">Sat</div>
+                </div>
+            </div>
+            <input type="hidden" name="appointment_date" id="selected-date" required>
+
+            <!-- Step 2: Time -->
+            <div class="step-label">Step 2 — Select a Time Slot</div>
+            <div class="slots-grid" id="slots-grid">
+                {% set slots = ['9:00 AM','10:00 AM','11:00 AM','12:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'] %}
+                {% for slot in slots %}
+                <button type="button"
+                        class="slot-btn {% if slot in booked_slots %}booked{% endif %}"
+                        data-time="{{ slot }}"
+                        onclick="selectSlot(this)"
+                        {% if slot in booked_slots %}disabled{% endif %}>
+                    {{ slot }}
+                </button>
+                {% endfor %}
+            </div>
+            <input type="hidden" name="appointment_time" id="selected-time" required>
+
+            <!-- Selection summary -->
+            <div class="selection-summary" id="selection-summary">
+                Please select a date and time above
+            </div>
+
+            <!-- Step 3: Notes -->
+            <div class="step-label">Step 3 — Add a Note (Optional)</div>
+            <textarea name="notes"
+                      placeholder="Briefly describe what you'd like to discuss (optional)..."></textarea>
+
+            <button type="submit" class="confirm-btn" id="confirm-btn" disabled>
+                Confirm Booking
+            </button>
+
+        </form>
+
+    </div>
+</div>
+</div>
+
+<script>
+const bookedSlots = {{ booked_slots | tojson }};
+let currentDate   = new Date();
+let selectedDate  = null;
+let selectedTime  = null;
+
+const MONTHS = [
+    'January','February','March','April','May','June',
+    'July','August','September','October','November','December'
+];
+
+function changeMonth(dir) {
+    currentDate.setMonth(currentDate.getMonth() + dir);
+    renderCalendar();
+}
+
+function renderCalendar() {
+    const year  = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const today = new Date();
+
+    document.getElementById('month-label').textContent =
+        `${MONTHS[month]} ${year}`;
+
+    const grid   = document.getElementById('calendar-grid');
+    const headers = grid.querySelectorAll('.cal-day-header');
+
+    // Clear old day cells
+    grid.querySelectorAll('.cal-day, .empty').forEach(e => e.remove());
+
+    const firstDay    = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Empty cells before first day
+    for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'cal-day empty';
+        grid.appendChild(empty);
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+        const cell    = document.createElement('div');
+        const cellDate = new Date(year, month, d);
+        const isPast  = cellDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const isSun   = cellDate.getDay() === 0;
+        const isToday = cellDate.toDateString() === today.toDateString();
+
+        cell.className = 'cal-day';
+        cell.textContent = d;
+
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+
+        if (isPast || isSun) {
+            cell.classList.add('disabled');
+        } else {
+            if (isToday)    cell.classList.add('today');
+            if (selectedDate === dateStr) cell.classList.add('selected');
+
+            cell.onclick = () => {
+                document.querySelectorAll('.cal-day').forEach(c => c.classList.remove('selected'));
+                cell.classList.add('selected');
+                selectedDate = dateStr;
+                document.getElementById('selected-date').value = dateStr;
+                updateSlots(dateStr);
+                updateSummary();
+            };
+        }
+
+        grid.appendChild(cell);
+    }
+}
+
+function updateSlots(dateStr) {
+    // Re-enable all slots first then disable booked ones for selected date
+    document.querySelectorAll('.slot-btn').forEach(btn => {
+        const time = btn.dataset.time;
+        const key  = dateStr + '_' + time;
+        if (bookedSlots.includes(key)) {
+            btn.classList.add('booked');
+            btn.disabled = true;
+        } else {
+            btn.classList.remove('booked');
+            btn.disabled = false;
+        }
+        btn.classList.remove('selected');
+    });
+    selectedTime = null;
+    document.getElementById('selected-time').value = '';
+}
+
+function selectSlot(btn) {
+    if (btn.classList.contains('booked')) return;
+    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedTime = btn.dataset.time;
+    document.getElementById('selected-time').value = selectedTime;
+    updateSummary();
+}
+
+function updateSummary() {
+    const summary = document.getElementById('selection-summary');
+    const btn     = document.getElementById('confirm-btn');
+
+    if (selectedDate && selectedTime) {
+        const d = new Date(selectedDate + 'T00:00:00');
+        const dateStr = d.toLocaleDateString('en-IN', {
+            weekday: 'long', day: 'numeric',
+            month: 'long', year: 'numeric'
+        });
+        summary.textContent = `&#10003; ${dateStr} at ${selectedTime}`;
+        summary.className = 'selection-summary filled';
+        btn.disabled = false;
+    } else {
+        summary.textContent = 'Please select a date and time above';
+        summary.className = 'selection-summary';
+        btn.disabled = true;
+    }
+}
+
+renderCalendar();
+</script>
+{% endblock %}

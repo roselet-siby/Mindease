@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Doctor Login — MindEase</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --sage: #7C9E8A;
+  --cream: #F8F4EE;
+  --warm: #EDE8DF;
+  --text: #2C2C2C;
+  --muted: #6B6B6B;
+  --danger: #C0675A;
+  --radius: 14px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 380px;
+}
+.login-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.6rem;
+  color: var(--sage);
+  margin-bottom: 4px;
+  text-align: center;
+}
+.login-sub {
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 28px;
+}
+.field { margin-bottom: 18px; }
+.field label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.field input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid #E5E0D8;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+.field input:focus { outline: 2px solid var(--sage); border-color: transparent; }
+.login-btn {
+  width: 100%;
+  background: var(--sage);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 8px;
+}
+.login-btn:hover { opacity: 0.9; }
+.flash {
+  background: #FDEDEA;
+  color: var(--danger);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  margin-bottom: 18px;
+  text-align: center;
+}
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+.back-link:hover { color: var(--sage); }
+</style>
+</head>
+<body>
+<div class="login-card">
+  <div class="login-title">MindEase</div>
+  <div class="login-sub">Doctor portal — view and manage your appointments</div>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for m in messages %}
+      <div class="flash">{{ m }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form method="POST" action="/doctor/login">
+    <div class="field">
+      <label>Email</label>
+      <input type="email" name="email" placeholder="you@clinic.com" required>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" name="password" placeholder="••••••••" required>
+    </div>
+    <button type="submit" class="login-btn">Log In</button>
+  </form>
+
+  <a href="/login" class="back-link">← Back to patient login</a>
+</div>
+</body>
+</html>

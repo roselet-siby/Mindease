@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Doctor Dashboard — MindEase</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --sage: #7C9E8A;
+  --sage-lt: #A8C4B4;
+  --cream: #F8F4EE;
+  --warm: #EDE8DF;
+  --text: #2C2C2C;
+  --muted: #6B6B6B;
+  --white: #FFFFFF;
+  --danger: #C0675A;
+  --radius: 14px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; }
+nav {
+  background: var(--white);
+  border-bottom: 1px solid #E8E3DA;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+}
+.nav-brand { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--sage); text-decoration: none; }
+.nav-links a {
+  padding: 7px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+.nav-links a:hover { background: var(--warm); color: var(--text); }
+.page { max-width: 900px; margin: 0 auto; padding: 32px 24px 60px; }
+h1 { font-family: 'DM Serif Display', serif; font-size: 1.8rem; margin-bottom: 4px; }
+.subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 28px; }
+.section-title { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 28px 0 12px; }
+.flash {
+  background: #E9F3EC;
+  color: var(--sage);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  margin-bottom: 18px;
+}
+.card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 24px; }
+.appt-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid #F0EEE7;
+}
+.appt-row:last-child { border-bottom: none; }
+.appt-info { flex: 1; }
+.appt-patient { font-weight: 600; font-size: 0.92rem; }
+.appt-meta { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+.appt-notes { font-size: 0.8rem; color: var(--muted); margin-top: 4px; font-style: italic; }
+.appt-actions { display: flex; gap: 8px; }
+.btn-accept, .btn-reject, .btn-complete {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-accept { background: var(--sage); color: white; }
+.btn-accept:hover { opacity: 0.9; }
+.btn-reject { background: #FDEDEA; color: var(--danger); }
+.btn-reject:hover { background: var(--danger); color: white; }
+.btn-complete { background: var(--warm); color: var(--sage); }
+.btn-complete:hover { background: var(--sage); color: white; }
+.status-badge { font-size: 0.72rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: capitalize; }
+.status-confirmed { background: #E9F3EC; color: var(--sage); }
+.status-cancelled { background: #FDEDEA; color: var(--danger); }
+.status-completed { background: var(--warm); color: var(--muted); }
+.empty-note { color: var(--muted); font-size: 0.85rem; text-align: center; padding: 24px; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="/doctor/dashboard" class="nav-brand">MindEase</a>
+  <div class="nav-links">
+    <a href="/doctor/logout">Log Out</a>
+  </div>
+</nav>
+
+<div class="page">
+ <h1>Welcome, {{ doctor_name }}</h1>
+  <p class="subtitle">Manage your appointment requests and schedule</p>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for m in messages %}
+      <div class="flash">{{ m }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="section-title">Pending requests ({{ pending|length }})</div>
+  <div class="card">
+    {% if not pending %}
+    <div class="empty-note">No pending requests right now.</div>
+    {% else %}
+      {% for a in pending %}
+      {# a: (appointment_id, patient_name, patient_email, date, time, status, notes) #}
+      <div class="appt-row">
+        <div class="appt-info">
+          <div class="appt-patient">{{ a[1] }}</div>
+          <div class="appt-meta">{{ a[3].strftime('%d %b %Y') if a[3] else a[3] }} at {{ a[4] }} &nbsp;·&nbsp; {{ a[2] }}</div>
+          {% if a[6] %}<div class="appt-notes">"{{ a[6] }}"</div>{% endif %}
+        </div>
+        <div class="appt-actions">
+          <a href="/doctor/appointment/{{ a[0] }}/accept" class="btn-accept">Accept</a>
+          <a href="/doctor/appointment/{{ a[0] }}/reject" class="btn-reject">Decline</a>
+        </div>
+      </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <div class="section-title">Upcoming, confirmed ({{ upcoming|length }})</div>
+  <div class="card">
+    {% if not upcoming %}
+    <div class="empty-note">Nothing confirmed yet.</div>
+    {% else %}
+      {% for a in upcoming %}
+      <div class="appt-row">
+        <div class="appt-info">
+          <div class="appt-patient">{{ a[1] }}</div>
+          <div class="appt-meta">{{ a[3].strftime('%d %b %Y') if a[3] else a[3] }} at {{ a[4] }} &nbsp;·&nbsp; {{ a[2] }}</div>
+          {% if a[6] %}<div class="appt-notes">"{{ a[6] }}"</div>{% endif %}
+        </div>
+        <div class="appt-actions">
+          <a href="/doctor/appointment/{{ a[0] }}/complete" class="btn-complete">Mark Completed</a>
+        </div>
+      </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <div class="section-title">History ({{ history|length }})</div>
+  <div class="card">
+    {% if not history %}
+    <div class="empty-note">No past appointments yet.</div>
+    {% else %}
+      {% for a in history %}
+      <div class="appt-row">
+        <div class="appt-info">
+          <div class="appt-patient">{{ a[1] }}</div>
+          <div class="appt-meta">{{ a[3].strftime('%d %b %Y') if a[3] else a[3] }} at {{ a[4] }}</div>
+        </div>
+        <span class="status-badge status-{{ a[5] }}">{{ a[5] }}</span>
+      </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+</body>
+</html>

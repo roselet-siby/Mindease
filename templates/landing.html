@@ -1,0 +1,446 @@
+{% extends "base.html" %}
+
+{% block title %}MindEase — AI Mental Health Support{% endblock %}
+
+{% block content %}
+<div class="landing">
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="glow" aria-hidden="true"></div>
+        <p class="hero-eyebrow load-in load-1">A quiet place to check in with yourself</p>
+        <h1 class="hero-title load-in load-2">MindEase</h1>
+        <p class="hero-tagline load-in load-3">
+            Say what's actually going on. MindEase listens, notices how
+            you're really feeling, and responds like it means it — not
+            with a script.
+        </p>
+        <div class="hero-actions load-in load-4">
+            <a href="/register" class="btn-hero-primary">Get Started</a>
+            <a href="/login" class="btn-hero-secondary">I already have an account</a>
+        </div>
+    </section>
+
+    <!-- Trust strip -->
+    <section class="trust-strip reveal">
+        <div class="trust-pill">
+            <span class="trust-icon">&#128274;</span>
+            <span>Private by design</span>
+        </div>
+        <div class="trust-pill">
+            <span class="trust-icon">&#127760;</span>
+            <span>Here whenever you need it</span>
+        </div>
+        <div class="trust-pill">
+            <span class="trust-icon">&#129658;</span>
+            <span>Backed by real doctors</span>
+        </div>
+    </section>
+
+    <!-- What it is -->
+    <section class="info-section reveal">
+        <h2 class="section-heading">What is MindEase?</h2>
+        <p class="section-text">
+            MindEase is an AI companion trained to notice emotion and sentiment
+            in what you write, then respond to the person behind the words —
+            not just the words themselves. No judgment, no waiting room,
+            no small talk you didn't ask for.
+        </p>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-section reveal">
+        <h2 class="section-heading">How it works</h2>
+        <div class="how-grid">
+            <div class="how-card how-sage">
+                <div class="how-num">1</div>
+                <div class="how-title">Say what's on your mind</div>
+                <div class="how-desc">Type freely, like you would to a friend. There's no right way to start.</div>
+            </div>
+            <div class="how-card how-clay">
+                <div class="how-num">2</div>
+                <div class="how-title">MindEase reads the room</div>
+                <div class="how-desc">Trained models pick up on your emotion and tone as you write, in real time.</div>
+            </div>
+            <div class="how-card how-sage">
+                <div class="how-num">3</div>
+                <div class="how-title">You get a reply that fits</div>
+                <div class="how-desc">Shaped around what you actually said — not a generic, one-size-fits-all line.</div>
+            </div>
+            <div class="how-card how-clay">
+                <div class="how-num">4</div>
+                <div class="how-title">Carry it forward if you choose</div>
+                <div class="how-desc">Turn your patterns into a private report to bring to a doctor or counsellor.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Safety & Privacy -->
+    <section class="assurance-section reveal">
+        <div class="assurance-grid">
+            <div class="assurance-card assurance-boundary">
+                <div class="assurance-icon">&#9888;&#65039;</div>
+                <div class="assurance-title">A support tool, not a replacement for therapy</div>
+                <div class="assurance-text">
+                    MindEase can't diagnose conditions or give medical advice.
+                    If you're in crisis or having thoughts of self-harm, please
+                    reach out to a professional right away.
+                </div>
+                <div class="assurance-helplines">
+                    <strong>iCall:</strong> 9152987821 &nbsp;&middot;&nbsp;
+                    <strong>Vandrevala Foundation:</strong> 1860-2662-345 (24/7)
+                </div>
+            </div>
+            <div class="assurance-card assurance-privacy">
+                <div class="assurance-icon">&#128274;</div>
+                <div class="assurance-title">Your privacy matters</div>
+                <div class="assurance-text">
+                    Your conversations stay yours. Even our admin team only ever
+                    sees anonymized statistics — never your actual messages.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="cta-section reveal">
+        <h2 class="cta-title">Ready to talk?</h2>
+        <p class="cta-sub">It takes less than a minute to start.</p>
+        <a href="/register" class="btn-hero-primary">Create Your Free Account</a>
+    </section>
+
+</div>
+
+<style>
+    .landing {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 20px 0 60px;
+        overflow: hidden;
+        --sage-deep:   #5FA8D3;
+        --sage-deep-hover: #4B92BC;
+        --clay:        #A77DE8;
+        --clay-bg:     #F2EBFF;
+        --sage-bg:     #E8F6FC;
+        --card:        #FFFDFB;
+        --card-deep:   #F8F5FF;
+    }
+
+    /* ---------- Hero ---------- */
+    .hero {
+        position: relative;
+        text-align: center;
+        padding: 76px 20px 60px;
+        isolation: isolate;
+    }
+
+    .glow {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        width: 420px;
+        height: 420px;
+        transform: translateX(-50%);
+        background: radial-gradient(circle, #7ED6DF 0%, #C9A7FF 55%, transparent 78%);
+        opacity: 0.22;
+        z-index: -1;
+        filter: blur(30px);
+    }
+
+    .hero-eyebrow {
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--sage-deep);
+        margin-bottom: 14px;
+    }
+
+    .hero-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 3.2rem;
+        color: var(--text);
+        margin-bottom: 18px;
+        letter-spacing: -0.01em;
+    }
+
+    .hero-tagline {
+        font-size: 1.08rem;
+        color: var(--muted);
+        max-width: 480px;
+        margin: 0 auto 34px;
+        line-height: 1.65;
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-hero-primary {
+        padding: 13px 28px;
+        background: var(--sage-deep);
+        color: var(--card);
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+        display: inline-block;
+        box-shadow: 0 8px 18px -8px rgba(63, 122, 92, 0.55);
+    }
+
+    .btn-hero-primary:hover {
+        background: var(--sage-deep-hover);
+        transform: translateY(-2px);
+    }
+
+    .btn-hero-secondary {
+        padding: 13px 28px;
+        background: var(--card);
+        color: var(--text);
+        border: 1.5px solid var(--clay);
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+        display: inline-block;
+    }
+
+    .btn-hero-secondary:hover {
+        background: var(--clay-bg);
+    }
+
+    /* ---------- Trust strip ---------- */
+    .trust-strip {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 0 20px 20px;
+    }
+
+    .trust-pill {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--card);
+        border: 1px solid var(--sage-bg);
+        border-radius: 999px;
+        padding: 9px 18px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--text);
+        box-shadow: var(--shadow);
+    }
+
+    .trust-icon { font-size: 0.95rem; }
+
+    /* ---------- Sections ---------- */
+    .section-heading {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.6rem;
+        text-align: center;
+        margin-bottom: 18px;
+    }
+
+    .info-section {
+        padding: 44px 20px 20px;
+        text-align: center;
+    }
+
+    .section-text {
+        color: var(--muted);
+        font-size: 0.97rem;
+        line-height: 1.75;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .how-section { padding: 48px 20px; }
+
+    .how-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 28px;
+    }
+
+    .how-card {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 26px 24px;
+        box-shadow: var(--shadow);
+        border-top: 4px solid transparent;
+        transition: transform 0.25s ease;
+    }
+
+    .how-card:hover { transform: translateY(-3px); }
+
+    .how-sage { border-top-color: var(--sage-deep); }
+    .how-clay { border-top-color: var(--clay); }
+
+    .how-num {
+        width: 32px;
+        height: 32px;
+        color: var(--card);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        margin-bottom: 14px;
+        font-family: 'DM Serif Display', serif;
+    }
+
+    .how-sage .how-num { background: var(--sage-deep); }
+    .how-clay .how-num { background: var(--clay); }
+
+    .how-title {
+        font-weight: 600;
+        font-size: 0.98rem;
+        margin-bottom: 8px;
+    }
+
+    .how-desc {
+        font-size: 0.86rem;
+        color: var(--muted);
+        line-height: 1.55;
+    }
+
+    /* ---------- Safety & Privacy ---------- */
+    .assurance-section { padding: 20px 20px 48px; }
+
+    .assurance-grid {
+        display: grid;
+        grid-template-columns: 1.15fr 1fr;
+        gap: 18px;
+    }
+
+    .assurance-card {
+        border-radius: var(--radius);
+        padding: 26px;
+    }
+
+    .assurance-boundary {
+        background: #FFF3E7;
+        border: 1.5px solid #FFD7AA;
+    }
+
+    .assurance-privacy {
+        background: var(--sage-bg);
+        border: 1.5px solid #C9EEE5;
+    }
+
+    .assurance-icon { font-size: 1.5rem; margin-bottom: 10px; display: block; }
+
+    .assurance-boundary .assurance-title { color: #8A5CF6; }
+    .assurance-privacy .assurance-title { color: var(--sage-deep-hover); }
+
+    .assurance-title {
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    .assurance-text {
+        font-size: 0.85rem;
+        color: var(--muted);
+        line-height: 1.6;
+        margin-bottom: 10px;
+    }
+
+    .assurance-helplines {
+        font-size: 0.83rem;
+        color: var(--text);
+    }
+
+    /* ---------- Final CTA ---------- */
+    .cta-section {
+        text-align: center;
+        padding: 56px 20px 24px;
+    }
+
+    .cta-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.7rem;
+        margin-bottom: 8px;
+    }
+
+    .cta-sub {
+        font-size: 0.9rem;
+        color: var(--muted);
+        margin-bottom: 22px;
+    }
+
+    /* ---------- Page-load entrance (hero) ---------- */
+    .load-in {
+        opacity: 0;
+        transform: translateY(22px);
+        animation: loadIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .load-1 { animation-delay: 0.05s; }
+    .load-2 { animation-delay: 0.18s; }
+    .load-3 { animation-delay: 0.32s; }
+    .load-4 { animation-delay: 0.46s; }
+
+    @keyframes loadIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ---------- Scroll reveal ---------- */
+    .reveal {
+        opacity: 0;
+        transform: translateY(16px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .load-in { animation: none; opacity: 1; transform: none; }
+        .reveal { opacity: 1; transform: none; transition: none; }
+    }
+
+    @media (max-width: 600px) {
+        .how-grid { grid-template-columns: 1fr; }
+        .assurance-grid { grid-template-columns: 1fr; }
+        .hero-title { font-size: 2.3rem; }
+        .trust-strip { gap: 8px; }
+    }
+</style>
+
+<script>
+    (function () {
+        var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var reveals = document.querySelectorAll('.reveal');
+
+        if (prefersReduced || !('IntersectionObserver' in window)) {
+            reveals.forEach(function (el) { el.classList.add('is-visible'); });
+            return;
+        }
+
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        reveals.forEach(function (el) { observer.observe(el); });
+    })();
+</script>
+{% endblock %}

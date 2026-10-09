@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% block title %}Appointments — Admin — MindEase{% endblock %}
+
+{% block content %}
+<div class="page">
+
+    <div class="admin-header">
+        <div>
+            <h1 class="admin-title">Appointments</h1>
+            <p class="admin-sub">Manage all patient bookings from here</p>
+        </div>
+        <a href="/admin" class="back-btn">&#8592; Back to Admin</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, msg in messages %}
+                <div class="alert-{{ category }}">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        {% if appointments %}
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Specialization</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Notes</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appt in appointments %}
+                <tr>
+                    <td><strong>{{ appt[1] }}</strong></td>
+                    <td>{{ appt[2] }}</td>
+                    <td>{{ appt[3] }}</td>
+                    <td>{{ appt[4].strftime('%d %b %Y') if appt[4] else 'N/A' }}</td>
+                    <td>{{ appt[5] }}</td>
+                    <td class="notes-cell">{{ appt[7] or '—' }}</td>
+                    <td>
+                        <span class="status-tag status-{{ appt[6] }}">
+                            {% if appt[6] == 'pending' %}&#8987; Pending
+                            {% elif appt[6] == 'confirmed' %}&#10003; Confirmed
+                            {% elif appt[6] == 'cancelled' %}&#10005; Cancelled
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            {% if appt[6] != 'confirmed' %}
+                            <a href="/admin/update_appointment/{{ appt[0] }}/confirmed"
+                               class="action-btn confirm-btn">
+                               Confirm
+                            </a>
+                            {% endif %}
+                            {% if appt[6] != 'cancelled' %}
+                            <a href="/admin/update_appointment/{{ appt[0] }}/cancelled"
+                               class="action-btn cancel-btn"
+                               onclick="return confirm('Cancel this appointment?')">
+                               Cancel
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div style="text-align:center; padding: 60px 20px; color: var(--muted);">
+            No appointments booked yet.
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<style>
+    .admin-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+    }
+
+    .admin-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.8rem;
+        margin-bottom: 4px;
+    }
+
+    .admin-sub { color: var(--muted); font-size: 0.9rem; }
+
+    .back-btn {
+        padding: 8px 16px;
+        background: var(--warm);
+        color: var(--text);
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+    }
+
+    .admin-table th {
+        text-align: left;
+        padding: 12px 16px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--muted);
+        border-bottom: 2px solid #E8E3DA;
+    }
+
+    .admin-table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #F0EBE3;
+        vertical-align: middle;
+    }
+
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tr:hover td { background: var(--cream); }
+
+    .notes-cell {
+        max-width: 150px;
+        color: var(--muted);
+        font-size: 0.8rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .status-tag {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .status-pending   { background: #FEFAE8; color: #A07C20; }
+    .status-confirmed { background: #F0FAF4; color: #2D7A4F; }
+    .status-cancelled { background: var(--warm); color: var(--muted); }
+
+    .action-btns { display: flex; gap: 6px; }
+
+    .action-btn {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .confirm-btn {
+        background: #F0FAF4;
+        color: #2D7A4F;
+        border: 1px solid #C3E6D0;
+    }
+
+    .confirm-btn:hover { background: #2D7A4F; color: white; }
+
+    .cancel-btn {
+        background: #FDF0EE;
+        color: var(--danger);
+        border: 1px solid #EDD5D2;
+    }
+
+    .cancel-btn:hover { background: var(--danger); color: white; }
+
+    .alert-success {
+        background: #F0FAF4; border: 1px solid #C3E6D0;
+        color: #2D7A4F; padding: 12px 16px;
+        border-radius: 8px; font-size: 0.875rem; margin-bottom: 20px;
+    }
+
+    .alert-error {
+        background: #FDF0EE; border: 1px solid #EDD5D2;
+        color: var(--danger); padding: 12px 16px;
+        border-radius: 8px; font-size: 0.875rem; margin-bottom: 20px;
+    }
+</style>
+{% endblock %}

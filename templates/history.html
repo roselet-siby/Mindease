@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}History — MindEase{% endblock %}
+
+{% block extra_style %}
+.history-list { display: flex; flex-direction: column; gap: 16px; }
+.history-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 24px;
+}
+.history-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.history-date { font-size: 0.8rem; color: var(--muted); }
+.history-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+.tag-emotion    { background: var(--warm); color: var(--text); }
+.tag-sentiment-Positive { background: #F0FAF4; color: #2D7A4F; }
+.tag-sentiment-Neutral  { background: var(--warm); color: var(--muted); }
+.tag-sentiment-Negative { background: #FDF0EE; color: var(--danger); }
+.tag-stress-High     { background: #FDF0EE; color: var(--danger); }
+.tag-stress-Moderate { background: #FEFAE8; color: #A07C20; }
+.tag-stress-Low      { background: #F0FAF4; color: #2D7A4F; }
+.history-message {
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+.history-message .label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); display: block; margin-bottom: 4px; }
+.history-response {
+    background: white;
+    border: 1px solid #E8E3DA;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+}
+.empty-state { text-align: center; color: var(--muted); padding: 60px 20px; }
+{% endblock %}
+
+{% block content %}
+<div class="page">
+    <h1>Your History</h1>
+    <p class="subtitle">A look back at your past conversations and emotional patterns</p>
+
+    {% if not history %}
+    <div class="card empty-state">
+        No conversations yet. <a href="/chat">Start chatting</a> to build your history.
+    </div>
+    {% else %}
+    <div class="history-list">
+        {# each row: (message, bot_response, emotion, sentiment, stress_level, timestamp) #}
+        {% for h in history %}
+        <div class="history-card">
+            <div class="history-meta">
+                <div class="history-date">
+                    {{ h[5].strftime('%d %b %Y, %I:%M %p') if h[5] else '' }}
+                </div>
+                <div class="history-tags">
+                    <span class="tag tag-emotion">{{ h[2] }}</span>
+                    <span class="tag tag-sentiment-{{ h[3] }}">{{ h[3] }}</span>
+                    <span class="tag tag-stress-{{ h[4] }}">{{ h[4] }} stress</span>
+                </div>
+            </div>
+            <div class="history-message">
+                <span class="label">You said</span>
+                {{ h[0] }}
+            </div>
+            <div class="history-response">
+                <span class="label">MindEase replied</span>
+                {{ h[1] }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

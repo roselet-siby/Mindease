@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Generate Report — MindEase{% endblock %}
+
+{% block content %}
+<div class="page">
+
+    <div class="report-wrap">
+        <div class="card report-card">
+
+            <div class="report-icon">&#128203;</div>
+            <h1 class="report-title">Generate Your Wellness Report</h1>
+            <p class="report-sub">
+                Download a privacy-safe summary of your emotional patterns
+                to share with your doctor or counsellor.
+            </p>
+
+            <div class="privacy-box">
+                <div class="privacy-icon-sm">&#128274;</div>
+                <div class="privacy-text-sm">
+                    Your individual chat messages are <strong>never included</strong>
+                    in this report. Only aggregated emotion, sentiment and stress
+                    statistics are shown.
+                </div>
+            </div>
+
+            <div class="period-section">
+                <label class="period-label">Select Report Period</label>
+                <div class="period-grid">
+                    <a href="/download_report?period=7" class="period-btn">
+                        <div class="period-btn-title">Last 7 Days</div>
+                        <div class="period-btn-sub">Weekly summary</div>
+                    </a>
+                    <a href="/download_report?period=30" class="period-btn">
+                        <div class="period-btn-title">Last 30 Days</div>
+                        <div class="period-btn-sub">Monthly summary</div>
+                    </a>
+                    <a href="/download_report?period=90" class="period-btn">
+                        <div class="period-btn-title">Last 3 Months</div>
+                        <div class="period-btn-sub">Quarterly summary</div>
+                    </a>
+                    <a href="/download_report?period=all" class="period-btn">
+                        <div class="period-btn-title">All Time</div>
+                        <div class="period-btn-sub">Complete history</div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .report-wrap {
+        display: flex;
+        justify-content: center;
+        padding: 20px 0;
+    }
+
+    .report-card {
+        max-width: 560px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .report-icon {
+        font-size: 2.5rem;
+        margin-bottom: 16px;
+    }
+
+    .report-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.6rem;
+        margin-bottom: 10px;
+    }
+
+    .report-sub {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 24px;
+        max-width: 420px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .privacy-box {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        background: #F0FAF4;
+        border: 1.5px solid #C3E6D0;
+        border-radius: 12px;
+        padding: 14px 18px;
+        text-align: left;
+        margin-bottom: 28px;
+    }
+
+    .privacy-icon-sm { font-size: 1.2rem; flex-shrink: 0; }
+
+    .privacy-text-sm {
+        font-size: 0.825rem;
+        color: var(--muted);
+        line-height: 1.5;
+    }
+
+    .period-section { text-align: left; }
+
+    .period-label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 14px;
+    }
+
+    .period-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .period-btn {
+        display: block;
+        background: var(--cream);
+        border: 1.5px solid #E0DAD0;
+        border-radius: 12px;
+        padding: 18px;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .period-btn:hover {
+        background: var(--sage);
+        border-color: var(--sage);
+        transform: translateY(-2px);
+    }
+
+    .period-btn:hover .period-btn-title,
+    .period-btn:hover .period-btn-sub {
+        color: white;
+    }
+
+    .period-btn-title {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: var(--text);
+        margin-bottom: 4px;
+        transition: color 0.2s;
+    }
+
+    .period-btn-sub {
+        font-size: 0.8rem;
+        color: var(--muted);
+        transition: color 0.2s;
+    }
+
+    @media (max-width: 480px) {
+        .period-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}

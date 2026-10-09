@@ -1,0 +1,9 @@
+.env
+__pycache__/
+*.pyc
+venv/
+.vscode/
+*.exe
+generated_reports/
+models/
+generate_doctor_hashes.py

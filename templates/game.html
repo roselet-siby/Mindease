@@ -1,0 +1,561 @@
+{% extends "base.html" %}
+
+{% block title %}Game — MindEase{% endblock %}
+
+{% block extra_style %}
+:root {
+  --arcade-bg: #12211B;
+  --arcade-surface: #1B2E24;
+  --arcade-surface-2: #223A2C;
+  --arcade-text: #F4F1EA;
+  --arcade-muted: #9FB3A6;
+  --arcade-gold: #E8B94E;
+  --arcade-rose: #E8879E;
+  --arcade-rust: #B85C4A;
+  --arcade-blue: #6E8FBF;
+  --arcade-violet: #8C7AE6;
+  --arcade-teal: #5FBFB3;
+}
+
+.arcade-page {
+  background: var(--arcade-bg);
+  color: var(--arcade-text);
+  border-radius: 24px;
+  padding: 40px 28px 56px;
+  position: relative;
+  overflow: hidden;
+}
+
+.arcade-page .card {
+  background: var(--arcade-surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: var(--arcade-text);
+}
+
+/* ---------- HEADER ---------- */
+.page-header { text-align: center; margin-bottom: 40px; position: relative; z-index: 1; }
+.page-header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 2.6rem;
+  letter-spacing: 0.01em;
+  margin-bottom: 8px;
+}
+.page-header .subtitle {
+  color: var(--arcade-muted);
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- GARDEN CARD ---------- */
+.garden-card {
+  text-align: center;
+  padding: 44px 24px 34px;
+  position: relative;
+  overflow: hidden;
+}
+.firefly {
+  position: absolute;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--arcade-gold);
+  box-shadow: 0 0 8px 2px var(--arcade-gold);
+  opacity: 0;
+  animation: drift 6s ease-in-out infinite;
+}
+.firefly:nth-child(1) { top: 15%; left: 12%; animation-delay: 0s; }
+.firefly:nth-child(2) { top: 70%; left: 20%; animation-delay: 1.5s; }
+.firefly:nth-child(3) { top: 30%; left: 85%; animation-delay: 3s; }
+.firefly:nth-child(4) { top: 80%; left: 78%; animation-delay: 4.5s; }
+@keyframes drift {
+  0%, 100% { opacity: 0; transform: translate(0,0); }
+  50% { opacity: 0.9; transform: translate(6px,-10px); }
+}
+
+.streak-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--arcade-teal);
+  margin-bottom: 6px;
+}
+.streak-count {
+  font-family: 'DM Serif Display', serif;
+  font-size: 3.4rem;
+  color: var(--arcade-gold);
+  margin-bottom: 22px;
+  text-shadow: 0 0 24px rgba(232,185,78,0.35);
+}
+
+.garden-progress {
+  width: 100%;
+  max-width: 300px;
+  height: 8px;
+  background: var(--arcade-surface-2);
+  border-radius: 20px;
+  margin: 0 auto 30px;
+  overflow: hidden;
+}
+.garden-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--arcade-teal), var(--arcade-gold));
+  border-radius: 20px;
+  transition: width 0.8s cubic-bezier(.4,0,.2,1);
+}
+
+.garden-svg-wrap {
+  margin: 8px auto 22px;
+  filter: drop-shadow(0 10px 24px rgba(0,0,0,0.4));
+}
+
+.garden-message {
+  color: var(--arcade-muted);
+  font-size: 0.95rem;
+  max-width: 360px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ---------- SECTION TITLES ---------- */
+.section-title {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: 1.6rem;
+  margin: 48px 0 18px;
+  color: var(--arcade-text);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.15), transparent);
+}
+
+/* ---------- CHALLENGE CARD ---------- */
+.challenge-sentence {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  font-style: italic;
+  line-height: 1.65;
+  text-align: center;
+  padding: 40px 26px;
+  color: var(--arcade-text);
+  min-height: 70px;
+  background: var(--arcade-surface-2);
+  border-radius: 18px;
+  margin-bottom: 6px;
+}
+
+.emotion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+  gap: 12px;
+  margin: 24px 0 10px;
+}
+.emotion-btn {
+  padding: 16px 8px;
+  border: 2px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  background: var(--arcade-surface-2);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--arcade-muted);
+  transition: all 0.2s ease;
+}
+.emotion-btn:hover:not(:disabled) { transform: translateY(-2px); }
+.emotion-btn:disabled { cursor: default; opacity: 0.4; }
+.emotion-emoji { display: block; font-size: 1.6rem; margin-bottom: 6px; }
+
+/* each emotion glows its own color when selected or hovered */
+.emotion-btn[data-emotion="joy"]:hover:not(:disabled),
+.emotion-btn[data-emotion="joy"].selected {
+  border-color: var(--arcade-gold); color: var(--arcade-gold);
+  box-shadow: 0 0 18px rgba(232,185,78,0.25); background: rgba(232,185,78,0.08);
+}
+.emotion-btn[data-emotion="sadness"]:hover:not(:disabled),
+.emotion-btn[data-emotion="sadness"].selected {
+  border-color: var(--arcade-blue); color: var(--arcade-blue);
+  box-shadow: 0 0 18px rgba(110,143,191,0.25); background: rgba(110,143,191,0.08);
+}
+.emotion-btn[data-emotion="anger"]:hover:not(:disabled),
+.emotion-btn[data-emotion="anger"].selected {
+  border-color: var(--arcade-rust); color: var(--arcade-rust);
+  box-shadow: 0 0 18px rgba(184,92,74,0.25); background: rgba(184,92,74,0.08);
+}
+.emotion-btn[data-emotion="fear"]:hover:not(:disabled),
+.emotion-btn[data-emotion="fear"].selected {
+  border-color: var(--arcade-violet); color: var(--arcade-violet);
+  box-shadow: 0 0 18px rgba(140,122,230,0.25); background: rgba(140,122,230,0.08);
+}
+.emotion-btn[data-emotion="love"]:hover:not(:disabled),
+.emotion-btn[data-emotion="love"].selected {
+  border-color: var(--arcade-rose); color: var(--arcade-rose);
+  box-shadow: 0 0 18px rgba(232,135,158,0.25); background: rgba(232,135,158,0.08);
+}
+.emotion-btn[data-emotion="surprise"]:hover:not(:disabled),
+.emotion-btn[data-emotion="surprise"].selected {
+  border-color: var(--arcade-teal); color: var(--arcade-teal);
+  box-shadow: 0 0 18px rgba(95,191,179,0.25); background: rgba(95,191,179,0.08);
+}
+
+.challenge-submit {
+  display: block;
+  margin: 22px auto 0;
+  background: var(--arcade-gold);
+  color: #12211B;
+  border: none;
+  padding: 13px 38px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.challenge-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(232,185,78,0.3); }
+.challenge-submit:disabled { opacity: 0.35; cursor: default; }
+
+.result-panel {
+  display: none;
+  margin-top: 28px;
+  padding: 22px 24px;
+  border-radius: 16px;
+  background: var(--arcade-surface-2);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.result-panel.show { display: block; }
+.result-headline { font-weight: 800; font-size: 1.1rem; margin-bottom: 14px; }
+.result-headline.correct { color: var(--arcade-teal); }
+.result-headline.wrong { color: var(--arcade-rust); }
+.result-row {
+  display: flex; justify-content: space-between;
+  font-size: 0.87rem; padding: 9px 0;
+  border-bottom: 1px dashed rgba(255,255,255,0.1);
+  color: var(--arcade-muted);
+}
+.result-row:last-child { border-bottom: none; }
+.result-row span:last-child { font-weight: 700; text-transform: capitalize; color: var(--arcade-text); }
+
+.score-strip {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 26px; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  font-size: 0.85rem; color: var(--arcade-muted);
+}
+.score-strip strong { color: var(--arcade-gold); font-size: 1.2rem; font-family: 'DM Serif Display', serif; }
+.next-btn {
+  background: none; border: 1.5px solid var(--arcade-teal); color: var(--arcade-teal);
+  padding: 9px 20px; border-radius: 10px; font-weight: 700; font-size: 0.85rem;
+  cursor: pointer; display: none; transition: all 0.18s ease;
+}
+.next-btn.show { display: inline-block; }
+.next-btn:hover { background: var(--arcade-teal); color: #12211B; }
+
+/* ---------- LEADERBOARD ---------- */
+.leaderboard-table { width: 100%; border-collapse: collapse; }
+.leaderboard-table th {
+  text-align: left; font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--arcade-muted);
+  padding: 10px 12px; border-bottom: 1.5px solid rgba(255,255,255,0.1);
+}
+.leaderboard-table td {
+  padding: 13px 12px; font-size: 0.9rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  color: var(--arcade-text);
+}
+.leaderboard-table tr:hover td { background: var(--arcade-surface-2); }
+.rank-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--arcade-surface-2); color: var(--arcade-muted);
+  font-size: 0.75rem; font-weight: 700;
+}
+.rank-badge.gold   { background: var(--arcade-gold); color: #12211B; }
+.rank-badge.silver { background: #C7CFD6; color: #12211B; }
+.rank-badge.bronze { background: #C98A5E; color: #12211B; }
+
+@media (max-width: 480px) {
+  .streak-count { font-size: 2.4rem; }
+  .challenge-sentence { font-size: 1.15rem; padding: 28px 18px; }
+  .emotion-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+{% endblock %}
+
+{% block content %}
+<div class="page arcade-page">
+  <h1>&#127918; Game</h1>
+  <p class="subtitle">Grow your garden and test your emotion-reading skills against the AI</p>
+
+<span class="firefly"></span>
+<span class="firefly"></span>
+<span class="firefly"></span>
+<span class="firefly"></span>
+  <!-- ============================== -->
+  <!-- MOOD GARDEN -->
+  <!-- ============================== -->
+  <div class="card garden-card">
+    <div class="streak-label">Mood Check-in Streak</div>
+    <div class="streak-count">{{ streak }} day{{ 's' if streak != 1 else '' }}</div>
+
+    <div class="garden-progress">
+      <div class="garden-progress-fill" style="width: {{ (streak / 7 * 100) if streak < 7 else 100 }}%;"></div>
+    </div>
+
+    <div class="garden-svg-wrap">
+      {% if streak == 0 %}
+      <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="70" cy="120" rx="46" ry="10" fill="var(--warm)"/>
+        <path d="M32 120 Q30 90 45 82 Q95 82 108 120 Z" fill="#B98F63"/>
+        <path d="M32 120 Q30 90 45 82 L95 82 Q110 90 108 120 Z" fill="#A97D50" opacity="0.5"/>
+        <ellipse cx="70" cy="100" rx="6" ry="5" fill="#6B4A2B"/>
+      </svg>
+      {% elif streak <= 2%}
+      <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="70" cy="120" rx="46" ry="10" fill="var(--warm)"/>
+        <path d="M32 120 Q30 90 45 82 Q95 82 108 120 Z" fill="#B98F63"/>
+        <path d="M32 120 Q30 90 45 82 L95 82 Q110 90 108 120 Z" fill="#A97D50" opacity="0.5"/>
+        <line x1="70" y1="100" x2="70" y2="78" stroke="var(--sage)" stroke-width="4" stroke-linecap="round"/>
+        <path d="M70 88 Q56 82 58 72 Q70 76 70 88" fill="var(--sage-lt)"/>
+        <path d="M70 88 Q84 82 82 72 Q70 76 70 88" fill="var(--sage)"/>
+      </svg>
+      {% elif streak <= 4 %}
+      <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="70" cy="120" rx="46" ry="10" fill="var(--warm)"/>
+        <path d="M32 120 Q30 90 45 82 Q95 82 108 120 Z" fill="#B98F63"/>
+        <path d="M32 120 Q30 90 45 82 L95 82 Q110 90 108 120 Z" fill="#A97D50" opacity="0.5"/>
+        <line x1="70" y1="100" x2="70" y2="55" stroke="var(--sage)" stroke-width="5" stroke-linecap="round"/>
+        <path d="M70 90 Q50 82 52 66 Q70 72 70 90" fill="var(--sage-lt)"/>
+        <path d="M70 90 Q90 82 88 66 Q70 72 70 90" fill="var(--sage)"/>
+        <path d="M70 68 Q54 60 57 44 Q70 50 70 68" fill="var(--sage-lt)"/>
+        <path d="M70 68 Q86 60 83 44 Q70 50 70 68" fill="var(--sage)"/>
+      </svg>
+      {% elif streak <= 6 %}
+      <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="70" cy="120" rx="46" ry="10" fill="var(--warm)"/>
+        <path d="M32 120 Q30 90 45 82 Q95 82 108 120 Z" fill="#B98F63"/>
+        <path d="M32 120 Q30 90 45 82 L95 82 Q110 90 108 120 Z" fill="#A97D50" opacity="0.5"/>
+        <line x1="70" y1="100" x2="70" y2="40" stroke="var(--sage)" stroke-width="5" stroke-linecap="round"/>
+        <path d="M70 92 Q48 84 50 66 Q70 72 70 92" fill="var(--sage-lt)"/>
+        <path d="M70 92 Q92 84 90 66 Q70 72 70 92" fill="var(--sage)"/>
+        <path d="M70 70 Q52 62 55 46 Q70 52 70 70" fill="var(--sage-lt)"/>
+        <path d="M70 70 Q88 62 85 46 Q70 52 70 70" fill="var(--sage)"/>
+        <circle cx="70" cy="38" r="10" fill="#D9A6C2"/>
+        <circle cx="70" cy="38" r="5" fill="#F3D98B"/>
+      </svg>
+      {% else %}
+      <svg width="160" height="150" viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="80" cy="130" rx="56" ry="11" fill="var(--warm)"/>
+        <path d="M34 130 Q32 96 50 88 Q110 88 126 130 Z" fill="#B98F63"/>
+        <path d="M34 130 Q32 96 50 88 L110 88 Q128 96 126 130 Z" fill="#A97D50" opacity="0.5"/>
+
+        <line x1="80" y1="108" x2="80" y2="38" stroke="var(--sage)" stroke-width="5" stroke-linecap="round"/>
+        <path d="M80 98 Q56 90 58 70 Q80 76 80 98" fill="var(--sage-lt)"/>
+        <path d="M80 98 Q104 90 102 70 Q80 76 80 98" fill="var(--sage)"/>
+        <path d="M80 74 Q60 66 63 48 Q80 54 80 74" fill="var(--sage-lt)"/>
+        <path d="M80 74 Q100 66 97 48 Q80 54 80 74" fill="var(--sage)"/>
+
+        <g transform="translate(80 34)">
+          <circle cx="0" cy="-13" r="11" fill="#D9A6C2"/>
+          <circle cx="12" cy="-4" r="11" fill="#D9A6C2"/>
+          <circle cx="8" cy="10" r="11" fill="#D9A6C2"/>
+          <circle cx="-8" cy="10" r="11" fill="#D9A6C2"/>
+          <circle cx="-12" cy="-4" r="11" fill="#D9A6C2"/>
+          <circle cx="0" cy="0" r="8" fill="#F3D98B"/>
+        </g>
+
+        <g transform="translate(50 66)">
+          <circle cx="0" cy="-7" r="6" fill="#EAC1D6"/>
+          <circle cx="6" cy="-2" r="6" fill="#EAC1D6"/>
+          <circle cx="4" cy="6" r="6" fill="#EAC1D6"/>
+          <circle cx="-4" cy="6" r="6" fill="#EAC1D6"/>
+          <circle cx="-6" cy="-2" r="6" fill="#EAC1D6"/>
+          <circle cx="0" cy="0" r="4" fill="#F3D98B"/>
+        </g>
+        <g transform="translate(112 66)">
+          <circle cx="0" cy="-7" r="6" fill="#EAC1D6"/>
+          <circle cx="6" cy="-2" r="6" fill="#EAC1D6"/>
+          <circle cx="4" cy="6" r="6" fill="#EAC1D6"/>
+          <circle cx="-4" cy="6" r="6" fill="#EAC1D6"/>
+          <circle cx="-6" cy="-2" r="6" fill="#EAC1D6"/>
+          <circle cx="0" cy="0" r="4" fill="#F3D98B"/>
+        </g>
+      </svg>
+      {% endif %}
+    </div>
+
+    <div class="garden-message">
+      {% if streak == 0 %}
+        Log a mood check-in today to plant your seed.
+      {% elif streak < 7 %}
+        {{ 7 - streak }} more day{{ 's' if (7 - streak) != 1 else '' }} of check-ins until full bloom. Keep going!
+      {% else %}
+        Your garden is in full bloom &#127800; — {{ streak }} days strong.
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ============================== -->
+  <!-- AI EMOTION CHALLENGER -->
+  <!-- ============================== -->
+  <div class="section-title">&#129302; AI Emotion Challenger</div>
+  <div class="card">
+    <div class="challenge-sentence" id="sentenceText">Loading a sentence&hellip;</div>
+
+    <div class="emotion-grid" id="emotionGrid">
+      <button type="button" class="emotion-btn" data-emotion="joy"><span class="emotion-emoji">&#128522;</span>Joy</button>
+      <button type="button" class="emotion-btn" data-emotion="sadness"><span class="emotion-emoji">&#128546;</span>Sadness</button>
+      <button type="button" class="emotion-btn" data-emotion="anger"><span class="emotion-emoji">&#128544;</span>Anger</button>
+      <button type="button" class="emotion-btn" data-emotion="fear"><span class="emotion-emoji">&#128561;</span>Fear</button>
+      <button type="button" class="emotion-btn" data-emotion="love"><span class="emotion-emoji">&#10084;&#65039;</span>Love</button>
+      <button type="button" class="emotion-btn" data-emotion="surprise"><span class="emotion-emoji">&#128558;</span>Surprise</button>
+    </div>
+
+    <button type="button" class="challenge-submit" id="submitGuess" disabled>Submit Guess</button>
+
+    <div class="result-panel" id="resultPanel">
+      <div class="result-headline" id="resultHeadline"></div>
+      <div class="result-row"><span>Correct emotion</span><span id="resCorrect"></span></div>
+      <div class="result-row"><span>Your guess</span><span id="resUser"></span></div>
+      <div class="result-row"><span>AI model guessed</span><span id="resAI"></span></div>
+    </div>
+
+    <div class="score-strip">
+      <div>Your score: <strong id="scoreDisplay">{{ my_stats[0] if my_stats else 0 }}</strong></div>
+      <button type="button" class="next-btn" id="nextBtn">Next sentence &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ============================== -->
+  <!-- LEADERBOARD -->
+  <!-- ============================== -->
+  <div class="section-title">&#127942; Leaderboard</div>
+  <div class="card">
+    {% if not leaderboard %}
+    <p style="color:var(--muted); text-align:center; padding:20px;">No scores yet — be the first to play!</p>
+    {% else %}
+    <table class="leaderboard-table">
+      <thead>
+        <tr><th>#</th><th>Player</th><th>Score</th><th>Accuracy</th></tr>
+      </thead>
+      <tbody>
+        {% for row in leaderboard %}
+        <tr>
+          <td>
+            {% if loop.index == 1 %}<span class="rank-badge gold">1</span>
+            {% elif loop.index == 2 %}<span class="rank-badge silver">2</span>
+            {% elif loop.index == 3 %}<span class="rank-badge bronze">3</span>
+            {% else %}<span class="rank-badge">{{ loop.index }}</span>
+            {% endif %}
+          </td>
+          <td>{{ row[0] }}</td>
+          <td>{{ row[1] }}</td>
+          <td>{{ ((row[2] / row[3] * 100) | round | int) if row[3] else 0 }}%</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+let currentSentenceId = null;
+let selectedEmotion = null;
+let answered = false;
+
+const sentenceText  = document.getElementById('sentenceText');
+const emotionGrid   = document.getElementById('emotionGrid');
+const submitBtn     = document.getElementById('submitGuess');
+const resultPanel   = document.getElementById('resultPanel');
+const resultHeadline= document.getElementById('resultHeadline');
+const resCorrect    = document.getElementById('resCorrect');
+const resUser       = document.getElementById('resUser');
+const resAI         = document.getElementById('resAI');
+const scoreDisplay  = document.getElementById('scoreDisplay');
+const nextBtn       = document.getElementById('nextBtn');
+
+function loadSentence() {
+  answered = false;
+  selectedEmotion = null;
+  resultPanel.classList.remove('show');
+  nextBtn.classList.remove('show');
+  submitBtn.disabled = true;
+  submitBtn.style.display = 'block';
+  sentenceText.textContent = 'Loading a sentence…';
+
+  document.querySelectorAll('.emotion-btn').forEach(btn => {
+    btn.classList.remove('selected');
+    btn.disabled = false;
+  });
+
+  fetch('/game/sentence')
+    .then(res => res.json())
+    .then(data => {
+      currentSentenceId = data.sentence_id;
+      sentenceText.textContent = data.sentence;
+    })
+    .catch(() => {
+      sentenceText.textContent = 'Could not load a sentence. Please refresh.';
+    });
+}
+
+emotionGrid.addEventListener('click', (e) => {
+  const btn = e.target.closest('.emotion-btn');
+  if (!btn || answered) return;
+
+  document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedEmotion = btn.dataset.emotion;
+  submitBtn.disabled = false;
+});
+
+submitBtn.addEventListener('click', () => {
+  if (!selectedEmotion || answered) return;
+  answered = true;
+  submitBtn.disabled = true;
+
+  fetch('/game/guess', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sentence_id: currentSentenceId, guess: selectedEmotion })
+  })
+    .then(res => res.json())
+    .then(data => {
+      document.querySelectorAll('.emotion-btn').forEach(b => b.disabled = true);
+
+      resultHeadline.textContent = data.correct
+        ? `✓ Correct! +${data.points_gained} points`
+        : 'x Not quite — no points this round';
+      resultHeadline.className = 'result-headline ' + (data.correct ? 'correct' : 'wrong');
+
+      resCorrect.textContent = data.correct_emotion;
+      resUser.textContent = selectedEmotion;
+      resAI.textContent = data.ai_emotion + (data.ai_correct ? ' ✓' : ' ✗');
+
+      resultPanel.classList.add('show');
+      scoreDisplay.textContent = data.total_score;
+      submitBtn.style.display = 'none';
+      nextBtn.classList.add('show');
+    })
+    .catch(() => {
+      resultHeadline.textContent = 'Something went wrong — try again.';
+      resultHeadline.className = 'result-headline wrong';
+      resultPanel.classList.add('show');
+    });
+});
+
+nextBtn.addEventListener('click', loadSentence);
+
+loadSentence();
+</script>
+{% endblock %}

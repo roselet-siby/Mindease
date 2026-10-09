@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+{% block title %}My Appointments — MindEase{% endblock %}
+
+{% block content %}
+<div class="page">
+
+    <div class="appt-header">
+        <div>
+            <h1 class="appt-title">My Appointments</h1>
+            <p class="appt-sub">Your scheduled sessions with mental health professionals</p>
+        </div>
+        <a href="/psychiatrists" class="btn-book">+ Book New</a>
+    </div>
+ 
+    {% if appointments %}
+    <div class="report-prompt">
+        <span>💡 Generate a report to share with your doctor at your next appointment.</span>
+        <a href="/download_report" class="btn-report">Download Report</a>
+    </div>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, msg in messages %}
+                <div class="alert-{{ category }}">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if appointments %}
+        <div class="appt-list">
+            {% for appt in appointments %}
+            <div class="appt-card">
+                <div class="appt-left">
+                    <div class="appt-doctor">{{ appt[1] }}</div>
+                    <div class="appt-spec">{{ appt[2] }} &nbsp;|&nbsp; {{ appt[5] }}, {{ appt[3] }}</div>
+                    <div class="appt-contact">&#128222; {{ appt[4] }}</div>
+                    {% if appt[8] %}
+                    <div class="appt-notes">&#128203; {{ appt[8] }}</div>
+                    {% endif %}
+                </div>
+                <div class="appt-right">
+                    <div class="appt-date">
+                        {{ appt[6].strftime('%d %b %Y') if appt[6] else 'N/A' }}
+                    </div>
+                    <div class="appt-time">{{ appt[7] }}</div>
+                    <div class="appt-status status-{{ appt[9] }}">
+                        {% if appt[9] == 'pending' %}&#8987; Pending
+                        {% elif appt[9] == 'confirmed' %}&#10003; Confirmed
+                        {% elif appt[9] == 'cancelled' %}&#10005; Cancelled
+                        {% endif %}
+                    </div>
+                    {% if appt[9] != 'cancelled' %}
+                    <a href="/cancel_appointment/{{ appt[0] }}"
+                       class="btn-cancel"
+                       onclick="return confirm('Cancel this appointment?')">
+                       Cancel
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-appt">
+            <div class="empty-icon">&#128197;</div>
+            <div class="empty-title">No appointments yet</div>
+            <div class="empty-sub">Book a session with a mental health professional</div>
+            <a href="/psychiatrists" class="btn-book" style="margin-top:16px; display:inline-block;">
+                Browse Doctors
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+
+<style>
+    .report-prompt {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--warm);
+    border-radius: var(--radius);
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+    color: var(--text);
+    flex-wrap: wrap;
+}
+.btn-report {
+    background: var(--sage);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.82rem;
+    white-space: nowrap;
+}
+.btn-report:hover {
+    opacity: 0.9;
+}
+    .appt-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+    }
+
+    .appt-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.8rem;
+        margin-bottom: 4px;
+    }
+
+    .appt-sub { color: var(--muted); font-size: 0.9rem; }
+
+    .btn-book {
+        padding: 10px 20px;
+        background: var(--sage);
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: background 0.2s;
+    }
+
+    .btn-book:hover { background: #6A8E79; }
+
+    .appt-list { display: flex; flex-direction: column; gap: 14px; }
+
+    .appt-card {
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 22px 24px;
+        box-shadow: var(--shadow);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .appt-left { flex: 1; }
+
+    .appt-doctor {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 4px;
+    }
+
+    .appt-spec {
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-bottom: 4px;
+    }
+
+    .appt-contact {
+        font-size: 0.85rem;
+        color: var(--muted);
+    }
+
+    .appt-notes {
+        margin-top: 8px;
+        font-size: 0.825rem;
+        color: var(--muted);
+        font-style: italic;
+        max-width: 400px;
+    }
+
+    .appt-right {
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    .appt-date {
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 2px;
+    }
+
+    .appt-time {
+        font-size: 0.875rem;
+        color: var(--muted);
+        margin-bottom: 10px;
+    }
+
+    .appt-status {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .status-pending   { background: #FEFAE8; color: #A07C20; }
+    .status-confirmed { background: #F0FAF4; color: #2D7A4F; }
+    .status-cancelled { background: var(--warm); color: var(--muted); }
+
+    .btn-cancel {
+        display: inline-block;
+        padding: 5px 12px;
+        background: #FDF0EE;
+        color: var(--danger);
+        border: 1px solid #EDD5D2;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel:hover { background: var(--danger); color: white; }
+
+    .empty-appt {
+        text-align: center;
+        padding: 80px 20px;
+        color: var(--muted);
+    }
+
+    .empty-icon  { font-size: 3rem; margin-bottom: 16px; }
+    .empty-title { font-size: 1.1rem; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .empty-sub   { font-size: 0.9rem; }
+
+    .alert-success {
+        background: #F0FAF4; border: 1px solid #C3E6D0;
+        color: #2D7A4F; padding: 12px 16px;
+        border-radius: 8px; font-size: 0.875rem; margin-bottom: 20px;
+    }
+
+    .alert-error {
+        background: #FDF0EE; border: 1px solid #EDD5D2;
+        color: var(--danger); padding: 12px 16px;
+        border-radius: 8px; font-size: 0.875rem; margin-bottom: 20px;
+    }
+</style>
+{% endblock %}

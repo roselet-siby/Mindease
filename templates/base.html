@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+            MindEase
+        {% endblock %}
+    </title>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --sage:    #7C9E8A;
+            --sage-lt: #A8C4B4;
+            --cream:   #F8F4EE;
+            --warm:    #EDE8DF;
+            --text:    #2C2C2C;
+            --muted:   #6B6B6B;
+            --white:   #FFFFFF;
+            --danger:  #C0675A;
+            --radius:  14px;
+            --shadow:  0 4px 24px rgba(0,0,0,0.08);
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        nav {
+            background: var(--white);
+            border-bottom: 1px solid #E8E3DA;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.3rem;
+            color: var(--sage);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            padding: 7px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--muted);
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover {
+            background: var(--warm);
+            color: var(--text);
+        }
+
+        .nav-links a.active {
+            background: var(--sage);
+            color: white;
+        }
+
+        .nav-links a.logout {
+            color: var(--danger);
+            border: 1px solid #EDD5D2;
+        }
+
+        .nav-links a.logout:hover {
+            background: #FDF0EE;
+        }
+
+        .page {
+            padding: 40px 32px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 36px;
+            box-shadow: var(--shadow);
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        input[type=text],
+        input[type=email],
+        input[type=password] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #E0DAD0;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            background: var(--cream);
+            color: var(--text);
+            outline: none;
+            transition: border 0.2s;
+            margin-bottom: 18px;
+        }
+
+        input:focus {
+            border-color: var(--sage);
+            background: white;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            background: var(--sage);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #6A8E79;
+            transform: translateY(-1px);
+        }
+
+        .error-msg {
+            background: #FDF0EE;
+            border: 1px solid #EDD5D2;
+            color: var(--danger);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 28px;
+        }
+
+    </style>
+
+    <style>
+    {% block extra_style %}{% endblock %}
+    </style>
+
+    {% block head %}
+    {% endblock %}
+
+</head>
+<body>
+
+{% if session.user_id %}
+
+<nav>
+
+    <a class="nav-brand" href="/dashboard">
+        🌿 MindEase
+    </a>
+
+    <div class="nav-links">
+
+<a href="/game"
+   {% if request.path == '/game' %}
+   class="active"
+   {% endif %}>
+    &#127918; Game
+</a>
+
+        <a href="/dashboard"
+           {% if request.path == '/dashboard' %}
+           class="active"
+           {% endif %}>
+            Dashboard
+        </a>
+
+        <a href="/chat"
+           {% if request.path == '/chat' %}
+           class="active"
+           {% endif %}>
+            Chat
+        </a>
+
+        <a href="/history"
+           {% if request.path == '/history' %}
+           class="active"
+           {% endif %}>
+            History
+        </a>
+
+        <a href="/psychiatrists"
+           {% if request.path == '/psychiatrists' %}
+           class="active"
+           {% endif %}>
+            Find Help
+        </a>
+        <a href="/my_appointments"
+           {% if request.path == '/my_appointments' %}
+           class="active"
+           {% endif %}>
+            My Appointments
+        </a>
+ 
+        <a href="/mood"
+           {% if request.path == '/mood' %}
+           class="active"
+           {% endif %}>
+            Check-in
+        </a>
+<a href="/report"
+   {% if request.path == '/report' %}
+   class="active"
+   {% endif %}>
+    Report
+</a>
+        {% if session.get('user_role') == 'admin' %}
+        <a href="/admin"
+           {% if request.path == '/admin' %}
+           class="active"
+           {% endif %}>
+            🔐 Admin
+        </a>
+        {% endif %}
+
+        <a href="/logout"
+           class="logout">
+            Logout
+        </a>
+
+    </div>
+
+</nav>
+
+{% endif %}
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>

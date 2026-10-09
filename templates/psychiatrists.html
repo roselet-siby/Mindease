@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block title %}Find Help — MindEase{% endblock %}
+
+{% block extra_style %}
+.page-intro {
+    margin-bottom: 24px;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-top: 6px;
+}
+
+.crisis-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #FDF0EE;
+    border: 1.5px solid #EDD5D2;
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 0.875rem;
+    color: var(--danger);
+    margin: 20px 0 28px;
+}
+
+.crisis-notice .icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.doctors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.doctor-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.doctor-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.10);
+}
+
+.doctor-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--warm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 14px;
+}
+
+.doctor-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    margin-bottom: 4px;
+    color: var(--text);
+}
+
+.doctor-spec {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 14px;
+}
+
+.doctor-detail {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.87rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+
+.doctor-detail span:first-child {
+    flex-shrink: 0;
+}
+
+.doctor-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 16px;
+}
+
+.btn-book-appt,
+.btn-call {
+    flex: 1;
+    text-align: center;
+    padding: 9px 6px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.btn-book-appt {
+    background: var(--sage);
+    color: white;
+}
+
+.btn-book-appt:hover {
+    background: #6A8E79;
+}
+
+.btn-call {
+    background: var(--warm);
+    color: var(--sage);
+    border: 1px solid transparent;
+}
+
+.btn-call:hover {
+    background: var(--sage);
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 24px;
+    margin-top: 20px;
+}
+
+.empty-state .icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+
+.empty-state p {
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+{% endblock %}
+
+{% block content %}
+<div class="page">
+
+    <div class="page-intro">
+        <h1>Find Professional Help</h1>
+        <p class="subtitle">Connect with a licensed psychiatrist or mental health professional near you</p>
+    </div>
+
+    <div class="crisis-notice">
+        <span class="icon">⚠️</span>
+        <span>If you are in crisis or feel you may harm yourself, please call a local emergency number immediately.</span>
+    </div>
+
+    {% if not doctors %}
+    <div class="card empty-state">
+        <div class="icon">🩺</div>
+        <p>No psychiatrists found in the directory yet.</p>
+    </div>
+
+    {% else %}
+    <div class="doctors-grid">
+        {% for doc in doctors %}
+        {# doc: (doctor_id, name, specialization, location, contact_number, clinic_name) #}
+        <div class="doctor-card">
+            <div class="doctor-avatar">🧑‍⚕️</div>
+            <div class="doctor-name">{{ doc[1] }}</div>
+            <div class="doctor-spec">{{ doc[2] or 'Psychiatry' }}</div>
+
+            {% if doc[5] %}
+            <div class="doctor-detail">
+                <span>🏥</span><span>{{ doc[5] }}</span>
+            </div>
+            {% endif %}
+
+            {% if doc[3] %}
+            <div class="doctor-detail">
+                <span>📍</span><span>{{ doc[3] }}</span>
+            </div>
+            {% endif %}
+
+            <div class="doctor-actions">
+                <a class="btn-book-appt" href="/book_appointment/{{ doc[0] }}">📅 Book Appointment</a>
+                {% if doc[4] %}
+                <a class="btn-call" href="tel:{{ doc[4] }}">📞 Call</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

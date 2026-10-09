@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — MindEase{% endblock %}
+
+{% block content %}
+<div class="page">
+
+    <!-- Welcome Header -->
+     <div class="welcome-section">
+    <div class="welcome-text">
+      <h1 class="welcome-title">Welcome back, {{ username }} 👋</h1>
+      <p class="welcome-sub">How are you feeling today? MindEase is here to listen and support you.</p>
+      {% if upcoming_count and upcoming_count > 0 %}
+      <p class="appt-count-note">
+        You have {{ upcoming_count }} upcoming appointment{{ 's' if upcoming_count != 1 else '' }}.
+        <a href="/my_appointments">View Appointments →</a>
+      </p>
+      {% endif %}
+    </div>
+    <div class="welcome-icon">🌿</div>
+  </div>
+
+    <!-- Mood Summary -->
+    {% if last_mood %}
+    <div class="mood-summary-card">
+        <div class="mood-summary-left">
+            <div class="mood-summary-label">Last Check-in</div>
+            <div class="mood-summary-value">
+    {% if last_mood[0] == 'happy' %}
+        😊 Happy
+    {% elif last_mood[0] == 'calm' %}
+        😌 Calm
+    {% elif last_mood[0] == 'neutral' %}
+        😐 Neutral
+    {% elif last_mood[0] == 'anxious' %}
+        😰 Anxious
+    {% elif last_mood[0] == 'sad' %}
+        😢 Sad
+    {% elif last_mood[0] == 'angry' %}
+        😠 Angry
+    {% endif %}
+    &nbsp; Intensity: {{ last_mood[1] }}/5
+</div>
+            <div class="mood-summary-time">
+                {{ last_mood[2].strftime('%d %b, %I:%M %p') if last_mood[2] else '' }}
+            </div>
+        </div>
+        <a href="/mood" class="mood-checkin-btn">+ New Check-in</a>
+    </div>
+    {% else %}
+    <div class="mood-summary-card">
+        <div class="mood-summary-left">
+            <div class="mood-summary-label">Daily Check-in</div>
+            <div class="mood-summary-value" style="color:var(--muted);">
+                No check-ins yet — how are you feeling today?
+            </div>
+        </div>
+        <a href="/mood" class="mood-checkin-btn">+ Check in Now</a>
+    </div>
+    {% endif %}
+
+    <!-- Quick Actions -->
+    <div class="section-title">Quick Actions</div>
+    <div class="actions-grid">
+
+        <a href="/chat" class="action-card primary">
+            <div class="action-icon">&#128172;</div>
+            <div class="action-body">
+                <div class="action-name">Start Chatting</div>
+                <div class="action-desc">Talk to MindEase about how you're feeling</div>
+            </div>
+            <div class="action-arrow">&#8594;</div>
+        </a>
+
+        <a href="/history" class="action-card">
+            <div class="action-icon">&#128203;</div>
+            <div class="action-body">
+                <div class="action-name">View History</div>
+                <div class="action-desc">Review your past conversations and emotions</div>
+            </div>
+            <div class="action-arrow">&#8594;</div>
+        </a>
+
+        <a href="/mood" class="action-card">
+            <div class="action-icon">&#128221;</div>
+            <div class="action-body">
+                <div class="action-name">Mood Check-in</div>
+                <div class="action-desc">Log how you're feeling today</div>
+            </div>
+            <div class="action-arrow">&#8594;</div>
+        </a>
+
+        
+
+        <a href="/report" class="action-card">
+            <div class="action-icon">&#128196;</div>
+            <div class="action-body">
+                <div class="action-name">Generate Report</div>
+                <div class="action-desc">Download your wellness report for your doctor</div>
+            </div>
+            <div class="action-arrow">&#8594;</div>
+        </a>
+
+        
+<a href="/psychiatrists" class="action-card">
+      <div class="action-icon">🩺</div>
+      <div class="action-body">
+        <div class="action-name">Find Help</div>
+        <div class="action-desc">Connect with mental health professionals</div>
+      </div>
+      <div class="action-arrow">→</div>
+    </a>
+ 
+    <!-- ADD THIS: -->
+    <a href="/my_appointments" class="action-card">
+      <div class="action-icon">📅</div>
+      <div class="action-body">
+        <div class="action-name">My Appointments</div>
+        <div class="action-desc">View and manage your bookings</div>
+      </div>
+      <div class="action-arrow">→</div>
+    </a>
+
+    </div>
+    <!-- Info Cards -->
+ 
+ 
+    <!-- Info Cards -->
+    <div class="section-title">About MindEase</div>
+  <div class="info-grid">
+ 
+    <div class="info-card">
+      <div class="info-icon">🤖</div>
+      <div class="info-title">AI Powered</div>
+      <div class="info-desc">Our chatbot uses fine-tuned deep learning models trained on mental health data to understand your emotions.</div>
+    </div>
+ 
+    <div class="info-card">
+      <div class="info-icon">🔒</div>
+      <div class="info-title">Private & Safe</div>
+      <div class="info-desc">Your conversations are stored securely. We care about your privacy and emotional safety.</div>
+    </div>
+ 
+    <div class="info-card">
+      <div class="info-icon">📈</div>
+      <div class="info-title">Emotion Tracking</div>
+      <div class="info-desc">MindEase detects your emotions and stress levels to provide personalized support.</div>
+    </div>
+ 
+    <div class="info-card">
+      <div class="info-icon">🆘</div>
+      <div class="info-title">Crisis Support</div>
+      <div class="info-desc">In times of crisis, MindEase immediately provides helpline numbers and professional resources.</div>
+    </div>
+ 
+  </div>
+ 
+  <!-- Crisis Banner - full width, sits BELOW the info grid -->
+  <div class="crisis-banner">
+    <div class="crisis-icon">🆘</div>
+    <div class="crisis-text">
+      <div class="crisis-title">Need immediate help?</div>
+      <div class="crisis-desc">
+        iCall Helpline: <a href="tel:9152987821" class="crisis-call"><strong>9152987821</strong></a>
+        &nbsp;|&nbsp;
+        Vandrevala Foundation: <a href="tel:18602662345" class="crisis-call"><strong>1860-2662-345</strong></a>
+      </div>
+    </div>
+  </div>
+
+<style>
+ .crisis-call {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+.crisis-call:hover {
+    opacity: 0.8;
+}
+ 
+@media (max-width: 600px) {
+    .info-grid { grid-template-columns: 1fr; }
+}
+ 
+    .mood-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+    .welcome-section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: linear-gradient(135deg, var(--sage) 0%, var(--sage-lt) 100%);
+        border-radius: var(--radius);
+        padding: 36px 40px;
+        margin-bottom: 24px;
+        color: white;
+    }
+
+    .welcome-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+        color: white;
+    }
+
+    .welcome-sub {
+        font-size: 0.95rem;
+        opacity: 0.9;
+        max-width: 480px;
+        line-height: 1.5;
+    }
+
+    .welcome-icon {
+        font-size: 4rem;
+        opacity: 0.8;
+    }
+
+    /* Mood summary */
+    .mood-summary-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 20px 24px;
+        box-shadow: var(--shadow);
+        margin-bottom: 28px;
+        border-left: 4px solid var(--sage);
+    }
+
+    .mood-summary-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        margin-bottom: 4px;
+    }
+
+    .mood-summary-value {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+
+    .mood-summary-time {
+        font-size: 0.8rem;
+        color: var(--muted);
+    }
+
+    .mood-checkin-btn {
+        padding: 10px 18px;
+        background: var(--sage);
+        color: white;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.875rem;
+        white-space: nowrap;
+        transition: background 0.2s;
+    }
+
+    .mood-checkin-btn:hover { background: #6A8E79; }
+
+    .section-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 16px;
+        margin-top: 8px;
+    }
+
+    .actions-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 36px;
+    }
+
+    .action-card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 18px 20px;
+        text-decoration: none;
+        color: var(--text);
+        box-shadow: var(--shadow);
+        transition: all 0.2s;
+        border: 1.5px solid transparent;
+    }
+
+    .action-card:hover {
+        border-color: var(--sage-lt);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+    }
+
+    .action-card.primary {
+        background: var(--sage);
+        color: white;
+        grid-column: 1 / -1;
+    }
+
+    .action-card.primary:hover {
+        background: #6a8e79;
+        border-color: transparent;
+    }
+
+    .action-icon {
+        font-size: 1.6rem;
+        width: 40px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+.appt-count-note {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: var(--sage);
+    font-weight: 500;
+}
+.appt-count-note a {
+    color: var(--sage);
+    font-weight: 600;
+    text-decoration: none;
+    margin-left: 4px;
+}
+.appt-count-note a:hover {
+    text-decoration: underline;
+}
+ 
+
+.appt-count-note {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 500;
+}
+.appt-count-note a {
+    color: white;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    margin-left: 4px;
+}
+.appt-count-note a:hover {
+    opacity: 0.85;
+}
+ 
+
+    .action-body { flex: 1; }
+
+    .action-name {
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 3px;
+    }
+
+    .action-desc {
+        font-size: 0.82rem;
+        opacity: 0.75;
+    }
+
+    .action-arrow {
+        font-size: 1.1rem;
+        opacity: 0.6;
+    }
+
+    .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+    width: 100%;
+}
+ 
+.info-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+}
+
+    .info-icon {
+        font-size: 1.6rem;
+        margin-bottom: 12px;
+    }
+
+    .info-title {
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+        color: var(--text);
+    }
+
+    .info-desc {
+        font-size: 0.85rem;
+        color: var(--muted);
+        line-height: 1.5;
+    }
+
+    .crisis-banner {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: #FDF0EE;
+        border: 1.5px solid #EDD5D2;
+        border-radius: var(--radius);
+        padding: 20px 24px;
+    }
+
+    .crisis-icon {
+        font-size: 1.8rem;
+        flex-shrink: 0;
+    }
+
+    .crisis-title {
+        font-weight: 600;
+        color: var(--danger);
+        margin-bottom: 4px;
+    }
+
+    .crisis-desc {
+        font-size: 0.875rem;
+        color: var(--muted);
+    }
+
+    @media (max-width: 600px) {
+        .welcome-section  { flex-direction: column; text-align: center; gap: 16px; }
+        .info-grid        { grid-template-columns: 1fr; }
+        .actions-grid     { grid-template-columns: 1fr; }
+        .welcome-icon     { display: none; }
+        .action-card.primary { grid-column: 1; }
+    }
+</style>
+{% endblock %}

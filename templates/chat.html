@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block title %}
+Chat — MindEase
+{% endblock %}
+
+{% block head %}
+<style>
+.new-chat-btn {
+    float: right;
+    text-decoration: none;
+    background: var(--sage);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.new-chat-btn:hover {
+    background: #6A8E79;
+}
+
+.chat-wrapper {
+    max-width: 760px;
+    margin: auto;
+}
+
+.chat-card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.chat-header {
+    padding: 22px 24px;
+    border-bottom: 1px solid #EEE7DD;
+}
+
+.chat-header h2 {
+    margin: 0;
+}
+
+.chat-box {
+    height: 500px;
+    overflow-y: auto;
+    padding: 24px;
+    background: #FCFAF7;
+}
+
+.message {
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-message {
+    align-items: flex-end;
+}
+
+.bot-message {
+    align-items: flex-start;
+}
+
+.bubble {
+    max-width: 75%;
+    padding: 14px 18px;
+    border-radius: 16px;
+    line-height: 1.5;
+    font-size: 0.94rem;
+}
+
+.user-message .bubble {
+    background: var(--sage);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.bot-message .bubble {
+    background: white;
+    border: 1px solid #E8E3DA;
+    border-bottom-left-radius: 4px;
+}
+
+/* ── Animated typing indicator ── */
+.typing-bubble {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 14px 18px;
+    background: white;
+    border: 1px solid #E8E3DA;
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+    width: fit-content;
+}
+
+.typing-bubble span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #A8C2B0;
+    border-radius: 50%;
+    animation: bounce 1.2s infinite ease-in-out;
+}
+
+.typing-bubble span:nth-child(2) { animation-delay: 0.2s; }
+.typing-bubble span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); }
+    40%            { transform: translateY(-6px); }
+}
+
+/* ── Send button disabled state ── */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.chat-input {
+    border-top: 1px solid #EEE7DD;
+    padding: 18px;
+    display: flex;
+    gap: 12px;
+    background: white;
+}
+
+.chat-input input {
+    flex: 1;
+    margin: 0;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--muted);
+    padding-top: 120px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page">
+
+    <div class="chat-wrapper">
+
+        <div class="chat-card">
+
+            <div class="chat-header">
+                <h2>AI Mental Health Chatbot</h2>
+                <a href="/new_chat" class="new-chat-btn">+ New Chat</a>
+                <p class="subtitle">Share your thoughts freely in a safe space.</p>
+            </div>
+
+            <div class="chat-box" id="chat-box">
+
+                {% if chat_history %}
+
+                    {% for chat in chat_history %}
+
+                    <div class="message user-message">
+                        <div class="bubble">{{ chat[0] }}</div>
+                    </div>
+
+                    <div class="message bot-message">
+                        <div class="bubble">{{ chat[1] }}</div>
+                    </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                <div class="empty-state">
+                    &#128172; Start a conversation with MindEase
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="chat-input">
+                <input
+                    type="text"
+                    id="message-input"
+                    placeholder="Type your feelings here..."
+                    autocomplete="off"
+                >
+                <button class="btn" id="send-btn" type="button" onclick="sendMessage()">
+                    Send
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+const chatBox   = document.getElementById('chat-box');
+const sendBtn   = document.getElementById('send-btn');
+const msgInput  = document.getElementById('message-input');
+
+// ── Scroll to bottom ──────────────────────────────────────
+function scrollToBottom() {
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// ── Remove empty state if present ────────────────────────
+function removeEmptyState() {
+    const emptyState = chatBox.querySelector('.empty-state');
+    if (emptyState) emptyState.remove();
+}
+
+// ── Add a message bubble to the UI ───────────────────────
+// Note: emotion/sentiment/stress are still received from
+// the server but intentionally NOT displayed here.
+// They are used only in the Reports section for privacy
+// and to keep the chat experience warm and human.
+function addMessageToChat(role, text) {
+    removeEmptyState();
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${role}-message`;
+    messageDiv.innerHTML = `<div class="bubble">${text}</div>`;
+
+    chatBox.appendChild(messageDiv);
+    scrollToBottom();
+}
+
+// ── Show animated typing indicator ───────────────────────
+function showTyping() {
+    const div = document.createElement('div');
+    div.className = 'message bot-message';
+    div.id = 'typing-indicator';
+    div.innerHTML = `
+        <div class="typing-bubble">
+            <span></span><span></span><span></span>
+        </div>
+    `;
+    chatBox.appendChild(div);
+    scrollToBottom();
+}
+
+// ── Remove typing indicator ───────────────────────────────
+function removeTyping() {
+    const indicator = document.getElementById('typing-indicator');
+    if (indicator) indicator.remove();
+}
+
+// ── Main send function ────────────────────────────────────
+async function sendMessage() {
+    const message = msgInput.value.trim();
+    if (!message) return;
+
+    // Disable input while waiting
+    msgInput.value   = '';
+    msgInput.disabled = true;
+    sendBtn.disabled  = true;
+
+    addMessageToChat('user', message);
+    showTyping();
+
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+        });
+
+        removeTyping();
+
+        if (!response.ok) {
+            // Session expired — redirect to login
+            if (response.status === 401) {
+                window.location.href = '/login';
+                return;
+            }
+            throw new Error('Server error');
+        }
+
+        const data = await response.json();
+        // emotion/sentiment/stress_level still come back in data
+        // but are intentionally not shown in the chat UI
+        addMessageToChat('bot', data.response);
+
+    } catch (error) {
+        console.error('Error:', error);
+        removeTyping();
+        addMessageToChat('bot', "I'm having trouble connecting right now. Please try again in a moment.");
+    } finally {
+        // Re-enable input regardless of success or failure
+        msgInput.disabled = false;
+        sendBtn.disabled  = false;
+        msgInput.focus();
+    }
+}
+
+// ── Enter key to send ─────────────────────────────────────
+msgInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !sendBtn.disabled) {
+        sendMessage();
+    }
+});
+
+// ── Auto-scroll on page load ──────────────────────────────
+scrollToBottom();
+</script>
+
+{% endblock %}
